@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Queue Token System</title>
+  <style>
+    body { font-family: Arial; padding: 30px; background: #f8f9fa; }
+    h1 { color: #333; }
+    input, button {
+      padding: 10px;
+      margin: 5px 0;
+      width: 300px;
+      font-size: 16px;
+    }
+    #result, #called-token {
+      margin-top: 20px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🎫 Queue Token Generator</h1>
+
+  <label>📱 Phone Number:</label><br>
+  <input type="text" id="phone" placeholder="+11234567890"><br>
+  <button onclick="getToken()">Generate Token</button>
+
+  <div id="result"></div>
+
+  <hr style="margin: 40px 0;">
+
+  <h2>📣 Staff Panel: Call Next Token</h2>
+  <button onclick="callNext()">Call Next</button>
+  <div id="called-token"></div>
+
+  <script>
+    async function getToken() {
+      const phone = document.getElementById("phone").value;
+      const res = await fetch("/token", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phone_number: phone })
+      });
+      const data = await res.json();
+      document.getElementById("result").innerText =
+        "✅ Token Generated: " + data.token_number;
+    }
+
+    async function callNext() {
+      const res = await fetch("/next", { method: "POST" });
+      const data = await res.json();
+      document.getElementById("called-token").innerText =
+        "📢 Called Token: " + (data.called_token || data.message);
+    }
+  </script>
+
+</body>
+</html>
